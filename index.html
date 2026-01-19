@@ -99,8 +99,8 @@ HTML
                 await fetch(uploadURL, {
                     method: 'PUT',
                     body: file,
-                    headers: { 'Content-Type': file.type }
-                });
+                    headers: { 'Content-Type': 'image/jpeg' }
+                })
 
                 // 3. Poll for AI processing
                 statusText.innerText = "AI is identifying celebrities and writing fun facts...";
@@ -169,4 +169,5 @@ HTML
     </script>
 </body>
 </html>
+
 
