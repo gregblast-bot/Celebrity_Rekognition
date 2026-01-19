@@ -32,7 +32,7 @@ HTML
         <div class="glass rounded-3xl p-8 shadow-2xl">
             <div id="dropZone" class="border-2 border-dashed border-slate-600 rounded-2xl p-10 text-center hover:border-blue-500 transition-all cursor-pointer bg-slate-800/50">
                 <input type="file" id="fileInput" class="hidden" accept="image/jpeg,image/png">
-                <div id="uploadPrompt">
+                <div id="Prompt">
                     <svg class="w-12 h-12 text-slate-500 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
                     <p class="text-lg font-semibold">Click to select a photo</p>
                     <p class="text-sm text-slate-500 mt-1">JPEG or PNG (Max 5MB)</p>
@@ -51,7 +51,7 @@ HTML
         <div id="statusArea" class="mt-8 hidden">
             <div class="flex items-center justify-center gap-4 text-slate-300">
                 <div class="loader w-6 h-6 border-4 border-slate-700 rounded-full"></div>
-                <p id="statusText">Generating secure upload link...</p>
+                <p id="statusText">Generating secure  link...</p>
             </div>
         </div>
 
@@ -73,7 +73,7 @@ HTML
         dropZone.onclick = () => fileInput.click();
         fileInput.onchange = (e) => {
             if (e.target.files[0]) {
-                document.getElementById('uploadPrompt').classList.add('hidden');
+                document.getElementById('Prompt').classList.add('hidden');
                 document.getElementById('fileSelected').classList.remove('hidden');
                 document.getElementById('selectedFileName').innerText = e.target.files[0].name;
             }
@@ -90,8 +90,8 @@ HTML
 
             try {
                 // 1. Get Presigned URL
-                statusText.innerText = "Authorizing S3 Upload...";
-                const urlResponse = await fetch(`${API_BASE_URL}/upload?fileName=${encodeURIComponent(file.name)}`);
+                statusText.innerText = "Authorizing S3 ...";
+                const urlResponse = await fetch(`${API_BASE_URL}/update?fileName=${encodeURIComponent(file.name)}`);
                 const { uploadURL, fileName } = await urlResponse.json();
 
                 // 2. Upload directly to S3
@@ -169,3 +169,4 @@ HTML
     </script>
 </body>
 </html>
+
