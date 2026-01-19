@@ -1,0 +1,37 @@
+<div id="app">
+  <h1>AI Celebrity Spotter</h1>
+  <input type="file" id="imageInput" accept="image/*">
+  <button onclick="uploadAndPoll()">Analyze Photo</button>
+  
+  <div id="results">
+    </div>
+</div>
+
+<script>
+  async function uploadAndPoll() {
+    const file = document.getElementById('imageInput').files[0];
+    // 1. (Simplified for demo) Upload file to S3
+    // 2. Start Polling your API
+    const interval = setInterval(async () => {
+      const response = await fetch(`YOUR_API_GATEWAY_URL/results?id=${file.name}`);
+      const data = await response.json();
+      
+      if (data.Status === 'COMPLETED') {
+        clearInterval(interval);
+        displayResults(data.CelebrityData);
+      }
+    }, 2000);
+  }
+
+  function displayResults(celebs) {
+    const div = document.getElementById('results');
+    div.innerHTML = celebs.map(c => `
+      <div class="card">
+        <h3>${c.Name}</h3>
+        <p><b>Fun Fact:</b> ${c.FunFact}</p>
+        <a href="${c.IMDB}" target="_blank">IMDb Profile</a> | 
+        <a href="${c.Social}" target="_blank">X (Twitter)</a>
+      </div>
+    `).join('');
+  }
+</script>
