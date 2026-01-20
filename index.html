@@ -76,63 +76,83 @@
             }
         };
 
-        analyzeBtn.onclick = async () => {
+       analyzeBtn.onclick = async () => {
             const file = fileInput.files[0];
             if (!file) return alert("Please select a file first.");
-
+        
             analyzeBtn.disabled = true;
             statusArea.classList.remove('hidden');
             resultsGrid.innerHTML = "";
-
+        
             try {
-                // 1. Get Presigned URL
                 statusText.innerText = "Authorizing S3 ...";
                 const urlResponse = await fetch(`${API_BASE_URL}/update?fileName=${encodeURIComponent(file.name)}`);
-                const { uploadURL, fileName } = await urlResponse.json();
-
-                // 2. Upload directly to S3
+                const responseData = await urlResponse.json();
+                
+                // DEBUG: Check what the server actually sent back
+                console.log("Server Response:", responseData);
+        
+                // Map the correct variables based on your Lambda's response
+                const uploadURL = responseData.uploadURL;
+                // If your Lambda returns { fileName: "..." }, use responseData.fileName
+                // If it returns { ImageID: "..." }, use responseData.ImageID
+                const imageID = responseData.fileName || responseData.ImageID;
+        
+                if (!uploadURL || !imageID) {
+                    throw new Error("Invalid response from server. Check Console.");
+                }
+        
                 statusText.innerText = "Uploading image to Cloud...";
                 await fetch(uploadURL, {
                     method: 'PUT',
                     body: file,
                     headers: { 'Content-Type': file.type }
                 });
-
-                // 3. Start Polling
+        
                 statusText.innerText = "AI is identifying celebrities...";
-                pollForResults(fileName);
-
+                pollForResults(imageID);
+        
             } catch (err) {
-                console.error(err);
-                alert("Cloud connection failed. Check your API URL and CORS settings.");
+                console.error("Upload Error:", err);
+                alert("Cloud connection failed: " + err.message);
                 resetUI();
             }
         };
-
+        
         async function pollForResults(imageID) {
+            if (!imageID) {
+                console.error("Cannot poll: imageID is undefined");
+                return;
+            }
+        
             let attempts = 0;
             const maxAttempts = 20; 
-
+        
             const interval = setInterval(async () => {
                 attempts++;
                 if (attempts > maxAttempts) {
                     clearInterval(interval);
-                    statusText.innerText = "Analysis timed out. Try again.";
+                    statusText.innerText = "Analysis timed out.";
                     resetUI();
                     return;
                 }
-
+        
                 try {
-                    const response = await fetch(`${API_BASE_URL}/results?imageID=${imageID}`);
+                    // Updated to ensure imageID is a string
+                    const response = await fetch(`${API_BASE_URL}/results?imageID=${encodeURIComponent(imageID)}`);
+                    
                     if (response.status === 200) {
                         const data = await response.json();
+                        console.log("Results Found:", data);
                         clearInterval(interval);
                         displayResults(data);
+                    } else {
+                        console.log(`Attempt ${attempts}: Still processing...`);
                     }
                 } catch (err) {
-                    console.log("Waiting for results...");
+                    console.error("Polling error:", err);
                 }
-            }, 3000); // Poll every 3 seconds
+            }, 3000);
         }
 
         function displayResults(data) {
@@ -148,3 +168,4 @@
     </script>
 </body>
 </html>
+
