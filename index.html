@@ -103,10 +103,16 @@
                 }
         
                 statusText.innerText = "Uploading image to Cloud...";
+                // Ensure file.type is actually present, otherwise default to image/jpeg
+                const contentType = file.type || 'image/jpeg';
+                
                 await fetch(uploadURL, {
                     method: 'PUT',
                     body: file,
-                    headers: { 'Content-Type': file.type }
+                    headers: {
+                        'Content-Type': contentType
+                    },
+                    mode: 'cors' // Explicitly set cors mode
                 });
         
                 statusText.innerText = "AI is identifying celebrities...";
@@ -168,6 +174,7 @@
     </script>
 </body>
 </html>
+
 
 
 
