@@ -157,16 +157,17 @@
 
         function displayResults(data) {
             resetUI();
-            // Assuming your response data has a 'celebrities' array or 'fact' string
+            console.log("Full Data from Dynamo:", data);
             resultsGrid.innerHTML = `
-                <div class="glass p-6 rounded-2xl animate-bounce-in">
-                    <h2 class="text-2xl font-bold text-emerald-400 mb-2">Analysis Complete!</h2>
-                    <p class="text-slate-300 leading-relaxed">${data.results || "Celebrity spotted, but no bio available."}</p>
+                <div class="glass p-6 rounded-2xl">
+                    <h2 class="text-2xl font-bold text-emerald-400 mb-2">Celebrity Spotted!</h2>
+                    <pre class="text-xs text-slate-400 overflow-auto">${JSON.stringify(data, null, 2)}</pre>
                 </div>
             `;
         }
     </script>
 </body>
 </html>
+
 
 
