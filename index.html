@@ -93,7 +93,7 @@
                     method: 'PUT',
                     body: file,
                     headers: {
-                        'Content-Type': file.type // Ensure this is passed as 'image/jpeg' or 'image/png'
+                        'Content-Type': file.type.toLowerCase() // Ensure this is passed as 'image/jpeg' or 'image/png'
                     }
                 });
 
@@ -164,6 +164,7 @@
     </script>
 </body>
 </html>
+
 
 
 
