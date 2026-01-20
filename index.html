@@ -112,6 +112,11 @@
             let attempts = 0;
             const maxAttempts = 20; // Approx 60 seconds
 
+            if (!imageId || imageId === "undefined") {
+                console.error("Cannot poll: ImageID is missing.");
+                return;
+            }
+
             const timer = setInterval(async () => {
                 attempts++;
                 try {
@@ -164,6 +169,7 @@
     </script>
 </body>
 </html>
+
 
 
 
