@@ -86,7 +86,7 @@
         
             try {
                 statusText.innerText = "Authorizing S3 ...";
-                const urlResponse = await fetch(`${API_BASE_URL}/update?fileName=${encodeURIComponent(file.name)}`);
+                const urlResponse = await fetch(`${API_BASE_URL}/update?fileName=${encodeURIComponent(file.name)}&contentType=${encodeURIComponent(file.type)}`);
                 const responseData = await urlResponse.json();
                 
                 // DEBUG: Check what the server actually sent back
@@ -168,4 +168,5 @@
     </script>
 </body>
 </html>
+
 
