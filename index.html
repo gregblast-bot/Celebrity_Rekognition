@@ -75,66 +75,69 @@
         analyzeBtn.onclick = async () => {
             const file = fileInput.files[0];
             if (!file) return alert("Please select a file first.");
-
-            // Reset UI
+        
             analyzeBtn.disabled = true;
             statusArea.classList.remove('hidden');
             resultsGrid.innerHTML = "";
-
+        
             try {
                 // 1. Get Presigned URL
-                statusText.innerText = "Authorizing S3 ...";
+                statusText.innerText = "Authorizing S3...";
                 const urlResponse = await fetch(`${API_BASE_URL}/update?fileName=${encodeURIComponent(file.name)}`);
+                
+                if (!urlResponse.ok) throw new Error("Failed to get upload URL");
+                
                 const { uploadURL, fileName } = await urlResponse.json();
-
+        
                 // 2. Upload directly to S3
                 statusText.innerText = "Uploading image to Cloud...";
-                await fetch(uploadURL, {
+                const uploadResult = await fetch(uploadURL, {
                     method: 'PUT',
                     body: file,
-                    headers: {
-                        'Content-Type': file.type.toLowerCase() // Ensure this is passed as 'image/jpeg' or 'image/png'
-                    }
+                    headers: { 'Content-Type': file.type }
                 });
-
-                // 3. Poll for AI processing
-                statusText.innerText = "AI is identifying celebrities and writing fun facts...";
-                pollForResults(fileName);
-
+        
+                if (!uploadResult.ok) throw new Error("S3 Upload failed");
+        
+                // 3. Start Polling
+                // NOTE: Ensure your backend triggers the analysis when the file hits S3
+                statusText.innerText = "AI is identifying celebrities...";
+                pollForResults(fileName); 
+        
             } catch (err) {
-                console.error(err);
-                alert("Cloud connection failed. Check your API URL and CORS settings.");
+                console.error("Logic Error:", err);
+                alert("Process failed: " + err.message);
                 resetUI();
             }
         };
-
-        async function pollForResults(imageID) {
+        
+        async function pollForResults(imageId) { // Changed to lowercase 'd' for consistency
             let attempts = 0;
-            const maxAttempts = 20; // Approx 60 seconds
-
-            if (!imageId || imageId === "undefined") {
-                console.error("Cannot poll: ImageID is missing.");
-                return;
-            }
-
+            const maxAttempts = 30; 
+        
             const timer = setInterval(async () => {
                 attempts++;
                 try {
-                    const response = await fetch(`${API_BASE_URL}/results?ImageID=${imageID}`);
+                    // Using backticks for template literal
+                    const response = await fetch(`${API_BASE_URL}/results?ImageID=${encodeURIComponent(imageId)}`);
                     
                     if (response.ok) {
                         const data = await response.json();
+                        // Check if the backend returned the expected 'COMPLETED' status
                         if (data.Status === 'COMPLETED') {
                             clearInterval(timer);
                             renderResults(data.CelebrityData);
                             resetUI();
                         }
                     }
-                } catch (e) { console.log("Waiting for database update..."); }
-
+                } catch (e) { 
+                    console.log("Polling... database record not found yet."); 
+                }
+        
                 if (attempts >= maxAttempts) {
                     clearInterval(timer);
-                    statusText.innerText = "Processing took too long. Check S3/Lambda logs.";
+                    statusText.innerText = "Timed out. AI is still thinking, try refreshing later.";
+                    resetUI();
                 }
             }, 3000);
         }
@@ -169,6 +172,7 @@
     </script>
 </body>
 </html>
+
 
 
 
