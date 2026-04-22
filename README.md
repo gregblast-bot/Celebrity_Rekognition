@@ -14,6 +14,7 @@ This functions as an end-to-end showcase of knowledge aquired in CS 2060: Intro 
 └── lambdas
     ├── fetcher.py
     ├── generator.py
+    ├── historier.py
     ├── processor.py
 ```
 
@@ -88,11 +89,11 @@ sequenceDiagram
    a. Create a S3 Bucket and enable CORS with `PUT` and `GET` methods allowed for the frontend origin.
    b. Create a DynamoDB table named `ImageMetadata` and set the partition key to a string `ImageID`.
    c. Set project roles for S3 and the Lambda functions through IAM.
-   d. Deploy the three Lambda functions: Generator, Processor, Fetcher.
+   d. Deploy the three Lambda functions: Fetcher, Generator, Historier, and Processor.
       - Generator: Generates the presigned URL.
       - Processor: Triggered by S3; handles AI logic.
       - Fetcher: Queries DynamoDB for information to be sent to the frontend.
-   e. Configure API Gateway with `/upload` and `/results` resources. Add `GET` methods to both resources and set integration type for lambda function. Configure `/upload` with the `generator` lambda and `/results` with the `fetch` lambda. 
+   e. Configure API Gateway with `/upload`, `/results`, and `/history` resources. Add `GET` methods to both resources and set integration type for lambda function. Configure `/upload` with the `generator` lambda, `/results` with the `fetcher` lambda, and `/history` with the `historier` lambda. 
    f. Go to the Bedrock console and request access for `Claude 3 Haiku`.
    g. Setup CloudWatch monitoring as needed.
 3. Configure the frontend:
