@@ -21,6 +21,20 @@
         <p class="mt-4 text-slate-400 font-medium">Please upload a photo for AI-powered celebrity recognition using Amazon Rekognition and Amazon Bedrock!</p>
     </header>
 
+    <div class="max-w-2xl w-full mb-6 text-right relative">
+        <button id="historyToggle" class="text-sm font-medium text-slate-400 hover:text-blue-400 transition-colors flex items-center gap-2 ml-auto">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+            View Recent History
+        </button>
+        
+        <div id="historyDropdown" class="hidden absolute right-0 mt-2 w-full glass rounded-2xl p-4 shadow-2xl z-50 max-h-64 overflow-y-auto border border-slate-700">
+            <h3 class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-3">Recent Recognitions</h3>
+            <div id="historyList" class="space-y-2">
+                <p class="text-sm text-slate-500 italic">Loading your history...</p>
+            </div>
+        </div>
+    </div>
+
     <main class="max-w-2xl w-full">
         <div class="glass rounded-3xl p-8 shadow-2xl">
             <div id="dropZone" class="border-2 border-dashed border-slate-600 rounded-2xl p-10 text-center hover:border-blue-500 transition-all cursor-pointer bg-slate-800/50">
@@ -32,7 +46,7 @@
                 </div>
                 <div id="fileSelected" class="hidden">
                     <p class="text-blue-400 font-bold text-xl" id="selectedFileName"></p>
-            2        <p class="text-slate-400 text-sm mt-2">Ready to analyze...</p>
+                    <p class="text-slate-400 text-sm mt-2">Ready to analyze...</p>
                 </div>
             </div>
 
@@ -183,14 +197,79 @@
 
         function displayResults(data) {
             resetUI();
-            console.log("Full Data from Dynamo:", data);
-            resultsGrid.innerHTML = `
-                <div class="glass p-6 rounded-2xl">
-                    <h2 class="text-2xl font-bold text-emerald-400 mb-2">Potential Celebrity Information.</h2>
-                    <pre class="text-xs text-slate-400 overflow-auto">${JSON.stringify(data, null, 2)}</pre>
+            const resultsGrid = document.getElementById('resultsGrid');
+            
+            // Processor saves data in a list called 'CelebrityData'.
+            const celebs = data.CelebrityData || [];
+
+            if (celebs.length === 0) {
+                resultsGrid.innerHTML = `
+                    <div class="glass p-8 text-center rounded-2xl border border-yellow-500/30">
+                        <p class="text-slate-400">No celebrities recognized. Try a clearer photo!</p>
+                    </div>`;
+                return;
+            }
+
+            resultsGrid.innerHTML = celebs.map(celeb => `
+                <div class="glass p-6 rounded-2xl border-l-4 border-blue-500 shadow-xl hover:scale-[1.02] transition-transform">
+                    <div class="flex justify-between items-start mb-4">
+                        <h2 class="text-2xl font-bold text-white">${celeb.Name}</h2>
+                        ${celeb.IMDB !== "N/A" ? 
+                            `<a href="${celeb.IMDB}" target="_blank" class="text-[10px] bg-yellow-500 text-black px-2 py-1 rounded font-black tracking-widest uppercase">IMDb</a>` 
+                            : ''}
+                    </div>
+                    <p class="text-slate-300 italic mb-4 leading-relaxed">"${celeb.FunFact}"</p>
+                    <div class="flex items-center gap-2">
+                        <a href="${celeb.Social}" target="_blank" class="text-blue-400 text-xs hover:underline font-medium">
+                            Search on X (Twitter) →
+                        </a>
+                    </div>
                 </div>
-            `;
+            `).join('');
         }
+
+        // History display logic.
+        const historyToggle = document.getElementById('historyToggle');
+        const historyDropdown = document.getElementById('historyDropdown');
+        const historyList = document.getElementById('historyList');
+
+        historyToggle.onclick = async () => {
+            // Toggle visibility
+            const isHidden = historyDropdown.classList.toggle('hidden');
+            
+            if (!isHidden) {
+                try {
+                    const response = await fetch(`${API_BASE_URL}/history`); 
+                    const historyData = await response.json();
+
+                    if (!historyData || historyData.length === 0) {
+                        historyList.innerHTML = `<p class="text-sm text-slate-500">No history found yet.</p>`;
+                        return;
+                    }
+
+                    historyList.innerHTML = historyData.map(item => `
+                        <div class="flex items-center justify-between p-3 rounded-xl bg-slate-800/40 border border-slate-700/50 hover:bg-slate-700/50 transition-all cursor-pointer" onclick="displayResults(${JSON.stringify(item).replace(/"/g, '&quot;')})">
+                            <div>
+                                <p class="text-sm font-bold text-blue-400">${item.celebrityName || 'Unknown'}</p>
+                                <p class="text-[10px] text-slate-500">${new Date(item.timestamp).toLocaleDateString()}</p>
+                            </div>
+                            <svg class="w-4 h-4 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                        </div>
+                    `).join('');
+
+                } catch (err) {
+                    console.error("History fetch error:", err);
+                    historyList.innerHTML = `<p class="text-sm text-red-400">Failed to load history.</p>`;
+                }
+            }
+
+            // Close dropdown when clicking outside.
+            window.addEventListener('click', (e) => {
+                if (!historyToggle.contains(e.target) && !historyDropdown.contains(e.target)) {
+                    historyDropdown.classList.add('hidden');
+                }
+        });
+    };
     </script>
 </body>
 </html>
