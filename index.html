@@ -56,6 +56,23 @@
     </main>
 
     <script>
+        // COGNITO GATEKEEPER!
+        const COGNITO_DOMAIN = "https://us-east-1vcj289mg8.auth.us-east-1.amazoncognito.com";
+        const CLIENT_ID = "7no4d6v5f8k4qtjpm6ncqt3b0e"; 
+        const REDIRECT_URI = window.location.origin; // Dynamically gets the Amplify URL
+
+        // Authentication check.
+        const hash = window.location.hash;
+        const urlParams = new URLSearchParams(hash.replace("#", "?"));
+        const accessToken = urlParams.get("access_token");
+
+        if (!accessToken) {
+            // No token? Bounce to Cognito.
+            const authUrl = `https://${COGNITO_DOMAIN}/login?client_id=${CLIENT_ID}&response_type=token&scope=email+openid+profile&redirect_uri=${encodeURIComponent(REDIRECT_URI)}`;
+            window.location.href = authUrl;
+        }
+
+        // Core app logic.
         const API_BASE_URL = "https://z6kyirsp11.execute-api.us-east-1.amazonaws.com/prod";     
         const fileInput = document.getElementById('fileInput');
         const dropZone = document.getElementById('dropZone');
@@ -63,6 +80,11 @@
         const statusArea = document.getElementById('statusArea');
         const statusText = document.getElementById('statusText');
         const resultsGrid = document.getElementById('resultsGrid');
+
+        // Helper to sign out.
+        signOutBtn.onclick = () => {
+            window.location.href = `https://${COGNITO_DOMAIN}/logout?client_id=${CLIENT_ID}&logout_uri=${encodeURIComponent(REDIRECT_URI)}`;
+        };
 
         // Helper to reset UI.
         function resetUI() {
