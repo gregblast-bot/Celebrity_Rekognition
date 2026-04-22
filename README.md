@@ -4,6 +4,19 @@
 A full-stack, serverless web application that identifies celebrities in user uploaded images and provides AI-generated fun facts using Amazon Web Services (AWS).
 This functions as an end-to-end showcase of knowledge aquired in CS 2060: Intro to Cloud Computing at PITT!
 
+## Project Structure
+
+```text
+.
+├── index.html
+├── images
+│   ├── *.*
+└── lambdas
+    ├── fetcher.py
+    ├── generator.py
+    ├── processor.py
+```
+
 ## Architecture
 The application is built on **AWS** using the following:
 - **DevOps:** Simple script ussing HTML5, Tailwind CSS, JavaScript, React managed by **Amplify**.
