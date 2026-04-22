@@ -210,22 +210,33 @@
                 return;
             }
 
-            resultsGrid.innerHTML = celebs.map(celeb => `
-                <div class="glass p-6 rounded-2xl border-l-4 border-blue-500 shadow-xl hover:scale-[1.02] transition-transform">
-                    <div class="flex justify-between items-start mb-4">
-                        <h2 class="text-2xl font-bold text-white">${celeb.Name}</h2>
-                        ${celeb.IMDB !== "N/A" ? 
-                            `<a href="${celeb.IMDB}" target="_blank" class="text-[10px] bg-yellow-500 text-black px-2 py-1 rounded font-black tracking-widest uppercase">IMDb</a>` 
-                            : ''}
+            resultsGrid.innerHTML = celebs.map(celeb => {
+                // Ensure the URL is clean
+                const cleanUrl = celeb.IMDB && celeb.IMDB !== "N/A" 
+                    ? (celeb.IMDB.startsWith('http') ? celeb.IMDB : `https://${celeb.IMDB.trim()}`)
+                    : null;
+
+                return `
+                    <div class="glass p-6 rounded-2xl border-l-4 border-blue-500 shadow-xl hover:scale-[1.02] transition-transform">
+                        <div class="flex justify-between items-start mb-4">
+                            <h3 class="text-xl font-bold text-white">${celeb.Name}</h3>
+                            ${cleanUrl ? 
+                                `<a href="${cleanUrl}" target="_blank" rel="noopener noreferrer" 
+                                    class="text-[10px] bg-yellow-500 text-black px-2 py-1 rounded font-black tracking-widest uppercase hover:bg-yellow-400 transition-colors">
+                                    IMDb
+                                </a>` 
+                                : `<span class="text-[10px] text-slate-500 uppercase tracking-widest">No Bio Link</span>`
+                            }
+                        </div>
+                        <p class="text-slate-300 italic mb-4 leading-relaxed">"${celeb.FunFact}"</p>
+                        <div class="flex items-center gap-2">
+                            <a href="${celeb.Social}" target="_blank" rel="noopener noreferrer" class="text-blue-400 text-xs hover:underline font-medium">
+                                Search on X (Twitter) →
+                            </a>
+                        </div>
                     </div>
-                    <p class="text-slate-300 italic mb-4 leading-relaxed">"${celeb.FunFact}"</p>
-                    <div class="flex items-center gap-2">
-                        <a href="${celeb.Social}" target="_blank" class="text-blue-400 text-xs hover:underline font-medium">
-                            Search on X (Twitter) →
-                        </a>
-                    </div>
-                </div>
-            `).join('');
+                `;
+            }).join('');
         }
 
         // History display logic.
