@@ -107,11 +107,27 @@
             statusArea.classList.add('hidden');
         }
 
-        // Helper to handle loading past persistent history..
+        // Helper to handle loading past persistent history.
         function loadFromHistory(itemString) {
-            const item = JSON.parse(decodeURIComponent(itemString));
-            displayResults(item);
-            historyDropdown.classList.add('hidden'); // Close the menu
+            // Parse the saved data.
+            const savedItem = JSON.parse(decodeURIComponent(itemString));
+            
+            // Wrap it so it matches the structure displayResults expects.
+            const formattedData = {
+                CelebrityData: [{
+                    Name: savedItem.CelebrityName,
+                    FunFact: savedItem.FunFact,
+                    IMDB: savedItem.IMDB,
+                    Social: savedItem.Social
+                }]
+            };
+            
+            // Send it to the existing display function.
+            displayResults(formattedData);
+            
+            // Hide the dropdown and scroll to results.
+            document.getElementById('historyDropdown').classList.add('hidden');
+            document.getElementById('resultsGrid').scrollIntoView({ behavior: 'smooth' });
         }
 
         dropZone.onclick = () => fileInput.click();
