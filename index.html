@@ -107,6 +107,13 @@
             statusArea.classList.add('hidden');
         }
 
+        // Helper to handle loading past persistent history..
+        function loadFromHistory(itemString) {
+            const item = JSON.parse(decodeURIComponent(itemString));
+            displayResults(item);
+            historyDropdown.classList.add('hidden'); // Close the menu
+        }
+
         dropZone.onclick = () => fileInput.click();
         fileInput.onchange = (e) => {
             if (e.target.files[0]) {
@@ -256,13 +263,6 @@
                     if (!historyData || historyData.length === 0) {
                         historyList.innerHTML = `<p class="text-sm text-slate-500">No history found yet.</p>`;
                         return;
-                    }
-
-                    // Add this to block to handle clicking a history item.
-                    function loadFromHistory(itemString) {
-                        const item = JSON.parse(decodeURIComponent(itemString));
-                        displayResults(item);
-                        historyDropdown.classList.add('hidden'); // Close the menu
                     }
 
                     // Update the historyList.innerHTML mapping inside historyToggle.onclick.
