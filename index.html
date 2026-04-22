@@ -247,15 +247,29 @@
                         return;
                     }
 
-                    historyList.innerHTML = historyData.map(item => `
-                        <div class="flex items-center justify-between p-3 rounded-xl bg-slate-800/40 border border-slate-700/50 hover:bg-slate-700/50 transition-all cursor-pointer" onclick="displayResults(${JSON.stringify(item).replace(/"/g, '&quot;')})">
-                            <div>
-                                <p class="text-sm font-bold text-blue-400">${item.celebrityName || 'Unknown'}</p>
-                                <p class="text-[10px] text-slate-500">${new Date(item.timestamp).toLocaleDateString()}</p>
+                    // Add this to block to handle clicking a history item.
+                    function loadFromHistory(itemString) {
+                        const item = JSON.parse(decodeURIComponent(itemString));
+                        displayResults(item);
+                        historyDropdown.classList.add('hidden'); // Close the menu
+                    }
+
+                    // Update the historyList.innerHTML mapping inside historyToggle.onclick.
+                    historyList.innerHTML = historyData.map(item => {
+                        const safeItem = encodeURIComponent(JSON.stringify(item));
+                        return `
+                            <div class="flex items-center justify-between p-3 rounded-xl bg-slate-800/40 border border-slate-700/50 hover:bg-slate-700/50 transition-all cursor-pointer" 
+                                onclick="loadFromHistory('${safeItem}')">
+                                <div>
+                                    <p class="text-sm font-bold text-blue-400">
+                                        ${item.CelebrityName || 'Recognition Result'}
+                                    </p>
+                                    <p class="text-[10px] text-slate-500">ID: ${item.ImageID.substring(0,8)}...</p>
+                                </div>
+                                <svg class="w-4 h-4 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
                             </div>
-                            <svg class="w-4 h-4 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
-                        </div>
-                    `).join('');
+                        `;
+                    }).join('');
 
                 } catch (err) {
                     console.error("History fetch error:", err);
