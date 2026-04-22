@@ -18,6 +18,7 @@ The application is built on **AWS** using the following:
 *Note*: 11 AWS services are used in this project.
 
 ### Sequence Diagram
+```mermaid
 sequenceDiagram
     autonumber
     actor User as User
