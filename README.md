@@ -67,6 +67,7 @@ sequenceDiagram
         APIGateway-->>Amplify: Returns "Tom Hanks"
     end
     Amplify->>User: Displays "Tom Hanks, He has an asteroid named after him!"
+'''
 
 ## Installation and Setup
 1. Clone the repository
