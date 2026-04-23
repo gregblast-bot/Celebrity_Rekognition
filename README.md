@@ -4,6 +4,9 @@
 A full-stack, serverless web application that identifies celebrities in user uploaded images and provides AI-generated fun facts using Amazon Web Services (AWS).
 This functions as an end-to-end showcase of knowledge aquired in CS 2060: Intro to Cloud Computing at PITT!
 
+## Website
+[Clickable Text](https://main.d3avkfapvvo9ac.amplifyapp.com)
+
 ## Project Structure
 
 ```text
