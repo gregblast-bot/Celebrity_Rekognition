@@ -24,9 +24,9 @@ This functions as an end-to-end showcase of knowledge aquired in CS 2060: Intro 
 ## Architecture
 The application is built on **AWS** using the following:
 - **DevOps:** Simple script using HTML5, Tailwind CSS, JavaScript/React managed by **Amplify**.
-   * *Justification*: **Amplify** was chosen to streamline my CI/CD pipeline. It automates the deployment of the frontend directly from the repository, handles SSL certificates, and provides global content delivery via Amazon’s CDN.
+   * *Justification*: **Amplify** was chosen to streamline my CI/CD pipeline. It is the **Deployment Automation** of the frontend directly from the repository, handles SSL certificates, and provides global content delivery via Amazon’s CDN.
 - **Security:** User authentication managed by **Cognito** and least-privilege roles managed by **IAM**.
-   * *Justification*: **Cognito** provides a secure, scalable user directory that handles OAuth 2.0 and OIDC through its User Pools and Identity Pools. **IAM** enforces a Zero-Trust architecture by using "Least-Privilege" policies. That said, I set up a very lenient policy in order to rapidly prototype this project.
+   * *Justification*: **Cognito** is the **Authentication Layer** and provides a secure, scalable user directory that handles OAuth 2.0 and OIDC through its User Pools and Identity Pools. **IAM** enforces a Zero-Trust architecture by using "Least-Privilege" policies. That said, I set up a very lenient policy in order to rapidly prototype this project.
 - **Networking:** RESTful entry point managed by **API Gateway** that triggers compute.
    * *Justification*: **API Gateway** acts as a managed front door that handles high-concurrency traffic, protects  against DDoS attacks, and provides a unified RESTful interface. It decouples the frontend from the backend, allowing the API to scale automatically and manage versioning without impacting the user experience.
 - **Compute:** Python scripts for backend logic managed by **Lambda**.
@@ -36,7 +36,7 @@ The application is built on **AWS** using the following:
 - **AI/ML:** Facial recognition managed by **Rekognition** and generative trivia managed by **Bedrock**. Image analysis is event-driven, triggered automatically by an image upload.
    * *Justification*: **Rekognition** provides specialized, high-accuracy computer vision for celebrity identification, while **Bedrock** (Claude 3) provides advanced reasoning to generate interesting, non-repetitive trivia. The event-driven trigger (S3 → Lambda) ensures that analysis begins the millisecond an image is saved, providing a near-instantaneous user experience.
 - **Database:** Persistent metadata storage managed by **DynamoDB**.
-   * *Justification*: **DynamoDB** is a NoSQL database that provides minimal latency at scale. It is also persistent, which ensures that celebrity data remains available for the history feature of this web app, long after the ephemeral compute has finished.
+   * *Justification*: **DynamoDB** is a NoSQL database that provides minimal latency at scale. It is also a form of **Persistent Storage**, which ensures that celebrity data remains available for the history feature of this web app, long after the ephemeral compute has finished.
 - **Monitoring:** Logs for troubleshooting managed by **CloudWatch**.
    * *Justification*: **CloudWatch** allows for real-time monitoring and detailed error logging.
 
