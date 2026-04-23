@@ -8,7 +8,6 @@ This functions as an end-to-end showcase of knowledge aquired in CS 2060: Intro 
 [AI Celebrity Spotter](https://main.d3avkfapvvo9ac.amplifyapp.com)
 
 ## Project Structure
-
 ```text
 .
 ├── index.html
@@ -40,7 +39,7 @@ The application is built on **AWS** using the following:
 - **Monitoring:** Logs for troubleshooting managed by **CloudWatch**.
    * *Justification*: **CloudWatch** allows for real-time monitoring and detailed error logging.
 
-*Note*: 11 AWS services are used in this project.
+*Note*: 10 AWS services are used in this project.
 
 ### Sequence Diagram
 ```mermaid
