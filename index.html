@@ -113,7 +113,7 @@
             const savedItem = JSON.parse(decodeURIComponent(itemString));
                     
             // Send it to the existing display function.
-            displayResults(formattedData);
+            displayResults(savedItem);
             
             // Hide the dropdown and scroll to results.
             document.getElementById('historyDropdown').classList.add('hidden');
