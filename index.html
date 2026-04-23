@@ -111,19 +111,6 @@
         function loadFromHistory(itemString) {
             // Parse the saved data.
             const savedItem = JSON.parse(decodeURIComponent(itemString));
-
-            console.log("Loading this item from history:", savedItem); // Check your console!
-
-            // Wrap it so it matches the structure displayResults expects.
-            const formattedData = {
-                CelebrityData: [{
-                    // This line says: Use 'Name' if it exists, otherwise use 'CelebrityName'
-                    Name: savedItem.Name || savedItem.CelebrityName || "Unknown Celebrity",
-                    FunFact: savedItem.FunFact || "No fun fact available.",
-                    IMDB: savedItem.IMDB || "N/A",
-                    Social: savedItem.Social || "#"
-                }]
-            };
                     
             // Send it to the existing display function.
             displayResults(formattedData);
