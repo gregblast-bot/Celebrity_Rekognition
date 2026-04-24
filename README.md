@@ -7,6 +7,9 @@ This functions as an end-to-end showcase of knowledge aquired in CS 2060: Intro 
 ## Website
 [AI Celebrity Spotter](https://main.d3avkfapvvo9ac.amplifyapp.com)
 
+## Video Demonstration
+[Video](https://www.youtube.com/watch?v=Iw9FMSpVF9c)
+
 ## Project Structure
 ```text
 .
